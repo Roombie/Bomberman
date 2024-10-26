@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3184868705977835881}
   - component: {fileID: 6221533019383709406}
   - component: {fileID: 5898226644741377241}
+  - component: {fileID: 3519503826260312848}
   m_Layer: 7
   m_Name: ItemPBomb
   m_TagString: Untagged
@@ -144,3 +145,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+--- !u!114 &3519503826260312848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7425383701721762379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d4b9ef33f97b648af17e02a58cde0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: -1434069514, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
+  - {fileID: 1663299833, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
+  framerate: 0.0666667
+  loop: 1

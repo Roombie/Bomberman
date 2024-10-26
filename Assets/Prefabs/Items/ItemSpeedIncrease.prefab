@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4272308755573300436}
   - component: {fileID: 6082371148250393614}
   - component: {fileID: 756210494275104407}
+  - component: {fileID: -1186718631235881895}
   m_Layer: 7
   m_Name: ItemSpeedIncrease
   m_TagString: Untagged
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 1434705716, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
+  m_Sprite: {fileID: 1502902736, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -144,3 +145,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+--- !u!114 &-1186718631235881895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5626592621952421422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d4b9ef33f97b648af17e02a58cde0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 1502902736, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
+  - {fileID: 1434705716, guid: fe83c01cecffabc4b85ef1a9c9b24291, type: 3}
+  framerate: 0.0666667
+  loop: 1

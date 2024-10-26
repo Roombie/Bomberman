@@ -22,6 +22,38 @@ MonoBehaviour:
     m_Localized: Jouer
     m_Metadata:
       m_Items: []
+  - m_Id: 38426795454464
+    m_Localized: Sortir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38637143994368
+    m_Localized: Choix
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41069618016256
+    m_Localized: Jeu realise par Roombie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41348849610752
+    m_Localized: Alpha 0.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44557731246080
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44828041555968
+    m_Localized: Langue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45013949886464
+    m_Localized: Control
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45236235415552
+    m_Localized: Ecran
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

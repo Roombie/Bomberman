@@ -22,6 +22,38 @@ MonoBehaviour:
     m_Localized: Play
     m_Metadata:
       m_Items: []
+  - m_Id: 38426795454464
+    m_Localized: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38637143994368
+    m_Localized: Options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41069618016256
+    m_Localized: Game made by Roombie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41348849610752
+    m_Localized: Alpha 0.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44557731246080
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44828041555968
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45013949886464
+    m_Localized: Control
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45236235415552
+    m_Localized: Display
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

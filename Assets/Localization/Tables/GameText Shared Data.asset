@@ -19,6 +19,38 @@ MonoBehaviour:
     m_Key: Play_text
     m_Metadata:
       m_Items: []
+  - m_Id: 38426795454464
+    m_Key: Exit_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38637143994368
+    m_Key: Options_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41069618016256
+    m_Key: GameCreator_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41348849610752
+    m_Key: GameVersion_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44557731246080
+    m_Key: Audio_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44828041555968
+    m_Key: Language_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45013949886464
+    m_Key: Control_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45236235415552
+    m_Key: Display_text
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
