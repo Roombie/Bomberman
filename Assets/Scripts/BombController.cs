@@ -6,7 +6,6 @@ using UnityEngine.Tilemaps;
 
 public class BombController : MonoBehaviour
 {
-    #region Variables
     [Header("Bomb")]
     public GameObject bombPrefab;
     public float bombFuseTime = 4f; // Total time before the bomb explodes
@@ -28,7 +27,6 @@ public class BombController : MonoBehaviour
 
     // Track exploded bombs to prevent multiple triggers
     private readonly HashSet<GameObject> explodedBombs = new();
-    #endregion
 
     private void OnEnable()
     {
@@ -94,30 +92,8 @@ public class BombController : MonoBehaviour
 
         position += direction; // Move position in the specified direction
 
-        // Check for objects on the "Bomb" layer
-        Collider2D bombCollider = Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, LayerMask.GetMask("Bomb"));
-
-        if (bombCollider != null && !explodedBombs.Contains(bombCollider.gameObject))
-        {
-            // Add the bomb to the exploded set to avoid repeating the explosion
-            explodedBombs.Add(bombCollider.gameObject);
-
-            // Trigger the bomb explosion with a delay to prevent recursion overload
-            StartCoroutine(DelayedExplosion(bombCollider.gameObject));
-        }
-
-        // Check for destructible objects in the item layer
-        Collider2D[] itemColliders = Physics2D.OverlapBoxAll(position, Vector2.one / 2f, 0f, itemLayerMask);
-        foreach (var collider in itemColliders)
-        {
-            // Optionally instantiate a destructible prefab or play an effect here
-            if (itemDestructiblePrefab != null)
-            {
-                Instantiate(itemDestructiblePrefab, collider.transform.position, Quaternion.identity);
-            }
-
-            Destroy(collider.gameObject); // Destroy the item gameobject
-        }
+        HandleBombDestructibles(position);
+        HandleItemDestructibles(position);
 
         // Check for destructible objects
         if (Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, explosionLayerMask))
@@ -134,6 +110,37 @@ public class BombController : MonoBehaviour
 
         // Recursively call to create longer explosions
         Explode(position, direction, length - 1);
+    }
+
+    private void HandleBombDestructibles(Vector2 position)
+    {
+        // Check for objects on the "Bomb" layer
+        Collider2D bombCollider = Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, LayerMask.GetMask("Bomb"));
+
+        if (bombCollider != null && !explodedBombs.Contains(bombCollider.gameObject))
+        {
+            // Add the bomb to the exploded set to avoid repeating the explosion
+            explodedBombs.Add(bombCollider.gameObject);
+
+            // Trigger the bomb explosion with a delay to prevent recursion overload
+            StartCoroutine(DelayedExplosion(bombCollider.gameObject));
+        }
+    }
+
+    private void HandleItemDestructibles(Vector2 position)
+    {
+        // Check for destructible objects in the item layer
+        Collider2D[] itemColliders = Physics2D.OverlapBoxAll(position, Vector2.one / 2f, 0f, itemLayerMask);
+        foreach (var collider in itemColliders)
+        {
+            // Optionally instantiate a destructible prefab or play an effect here
+            if (itemDestructiblePrefab != null)
+            {
+                Instantiate(itemDestructiblePrefab, collider.transform.position, Quaternion.identity);
+            }
+
+            Destroy(collider.gameObject); // Destroy the item gameobject
+        }
     }
 
     // Coroutine to handle delayed bomb explosions
@@ -169,15 +176,8 @@ public class BombController : MonoBehaviour
 
     public void IncreaseBlastRadius()
     {
-        if (explosionRadius <= maxExplosionRadius)
-        {
-            explosionRadius += 1; // Increase the blast radius
-            Debug.Log("Blast radius increased to: " + explosionRadius);
-        }
-        else
-        {
-            Debug.Log("Blast radius is already at the maximum: " + maxExplosionRadius);
-        }
+        explosionRadius = Mathf.Min(explosionRadius + 1, maxExplosionRadius);
+        Debug.Log("Blast radius increased to: " + explosionRadius);
     }
 
     public void MaximizeBlastRadius()

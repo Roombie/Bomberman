@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    public LayerMask stopBombLayer; // Assign this in the inspector to specify which layers can stop the bomb
+    [Header("Bomb Settings")]
+    public LayerMask stopBombLayer; // Layers that can stop the bomb
     private Rigidbody2D rb;
-    private bool isKicked = false; // To prevent multiple kicks
-    private bool isPunched = false; // To prevent multiple punches
+    private bool isKicked = false; // Prevents multiple kicks
+    private bool isPunched = false; // Prevents multiple punches
 
     private void Awake()
     {
@@ -13,39 +14,45 @@ public class Bomb : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic; // Start as kinematic
     }
 
+    private void Update()
+    {
+        WrapBomb(); // Check wrapping every frame
+    }
+
     #region Bomb Actions
     public void KickBomb(Vector2 direction, float force)
     {
-        rb.bodyType = RigidbodyType2D.Dynamic; // Change to dynamic to allow movement
-        rb.velocity = Vector2.zero; // Reset any previous velocity
-        rb.AddForce(direction.normalized * force, ForceMode2D.Impulse); // Apply force in the specified direction
+        if (isKicked) return; // Prevent multiple kicks
+
+        rb.bodyType = RigidbodyType2D.Dynamic; // Enable movement
+        rb.velocity = Vector2.zero; // Reset previous velocity
+        rb.AddForce(direction.normalized * force, ForceMode2D.Impulse); // Apply kick force
         isKicked = true; // Mark the bomb as kicked
     }
 
     public void PunchBomb(Vector2 direction, float force)
     {
-        isPunched = true;
+        if (isPunched) return; // Prevent multiple punches
+
+        rb.bodyType = RigidbodyType2D.Dynamic; // Enable movement
+        rb.velocity = Vector2.zero; // Reset previous velocity
+        rb.AddForce(direction.normalized * force, ForceMode2D.Impulse); // Apply punch force
+        isPunched = true; // Mark the bomb as punched
     }
 
     private void WrapBomb()
     {
         // Check if the bomb goes off-screen and wrap it around
-        if (transform.position.x < Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x)
-        {
-            transform.position = new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0)).x, transform.position.y);
-        }
-        else if (transform.position.x > Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0)).x)
-        {
-            transform.position = new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x, transform.position.y);
-        }
-        else if (transform.position.y < Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y)
-        {
-            transform.position = new Vector2(transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 1, 0)).y);
-        }
-        else if (transform.position.y > Camera.main.ViewportToWorldPoint(new Vector3(0, 1, 0)).y)
-        {
-            transform.position = new Vector2(transform.position.x, Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y);
-        }
+        Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
+        Vector3 newPos = transform.position;
+
+        if (viewportPos.x < 0) newPos.x = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0)).x;
+        else if (viewportPos.x > 1) newPos.x = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x;
+
+        if (viewportPos.y < 0) newPos.y = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, 0)).y;
+        else if (viewportPos.y > 1) newPos.y = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y;
+
+        transform.position = newPos;
     }
 
     private void StopBomb()
@@ -54,13 +61,13 @@ public class Bomb : MonoBehaviour
         rb.velocity = Vector2.zero;                  // Stop any movement
         rb.bodyType = RigidbodyType2D.Kinematic;    // Set back to kinematic
 
-        // Snap the position to the nearest integer coordinates
+        // Snap position to nearest integer
         transform.position = new Vector2(
             Mathf.Round(transform.position.x),
             Mathf.Round(transform.position.y)
         );
 
-        // Reset the kicked state
+        // Reset states
         isKicked = false;
         isPunched = false;
     }
@@ -81,8 +88,8 @@ public class Bomb : MonoBehaviour
             var playerController = collision.gameObject.GetComponent<BombermanController>();
             if (playerController != null && playerController.HasKick)
             {
-                Vector2 kickDirection = playerController.LastMoveInput.normalized; // Get the kick direction from the player
-                KickBomb(kickDirection, playerController.kickForce); // Use the kick force from the player
+                Vector2 kickDirection = playerController.LastMoveInput.normalized; // Get kick direction
+                KickBomb(kickDirection, playerController.kickForce); // Apply player's kick force
             }
         }
     }

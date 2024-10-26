@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bomb
+  - Win
   layers:
   - Default
   - TransparentFX

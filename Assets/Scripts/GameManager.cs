@@ -8,7 +8,8 @@ public enum GameState
     Countdown,
     Playing,
     Paused,
-    GameOver
+    GameOver,
+    Win
 }
 
 public class GameManager : MonoBehaviour
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text livesText;                 // Lives display using TextMeshPro
     public TMP_Text countdownText;             // Countdown text before game starts
     public GameObject countdownImage;          // Image displayed during the countdown
+    public GameObject winImage;                // Image displayed during win state
 
     private GameObject currentPlayer;
     private bool gamePaused = false;
@@ -74,6 +76,7 @@ public class GameManager : MonoBehaviour
 
         // Show countdown image and text
         countdownImage.SetActive(false);
+        winImage.SetActive(false);
         float countdown = countdownTime;
         countdownText.gameObject.SetActive(true);
 
@@ -139,8 +142,7 @@ public class GameManager : MonoBehaviour
     {
         playerLives--;
 
-        if (livesText != null)
-            livesText.text = playerLives.ToString();  // Update the lives display
+        UpdateLiveText();
 
         if (playerLives > 0)
         {
@@ -152,12 +154,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PlayerWon()
+    {
+        currentState = GameState.Win;  // Set state to Win
+        winImage.SetActive(true);
+        Debug.Log("You Win!");
+    }
+
+
     private void EndGame()
     {
         currentState = GameState.GameOver; // Set state to GameOver
         Debug.Log("Game Over! Out of lives.");
-        // Optionally load a GameOver scene here
-        // SceneManager.LoadScene("GameOver");
     }
 
     public void TogglePauseGame()
@@ -183,12 +191,18 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void GainExtraLife()
+    public void GainExtraLife(int lives)
     {
-        playerLives++;
+        playerLives += lives;
+        UpdateLiveText();
         Debug.Log("Extra life gained! Total lives: " + playerLives);
     }
 
+    private void UpdateLiveText()
+    {
+        if (livesText != null)
+            livesText.text = playerLives.ToString();  // Update the lives display
+    }
     #endregion
 
     #region Timer Logic

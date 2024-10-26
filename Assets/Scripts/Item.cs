@@ -41,7 +41,7 @@ public class Item : MonoBehaviour
                 bombermanController.IncreaseSpeed();
                 break;
             case ItemType.ExtraLife:
-                GameManager.instance.GainExtraLife();
+                GameManager.instance.GainExtraLife(1);
                 break;
             case ItemType.Kick:
                 bombermanController.EnableKick();

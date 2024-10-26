@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f909c82013cfa4c458d12a8b2a874c04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 5
   kickForce: 8
   punchRange: 8
 --- !u!114 &8310970787009213454
@@ -73,7 +73,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   explosionDuration: 1
-  explosionRadius: 1
+  explosionRadius: 8
   maxExplosionRadius: 8
   destructibleTiles: {fileID: 0}
   destructiblePrefab: {fileID: 8211669031180707945, guid: 85896429a4ee5a04d993bfdfa41c9d23, type: 3}
@@ -329,6 +329,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: dcae93a9-9e0a-43fc-8c5a-3d5ca0f84bfd
     m_ActionName: Player/Pause[/Keyboard/p,/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e680d714-9d55-4ec7-a6d7-818fb8da8b1c
+    m_ActionName: Player/PickUpBomb[/Keyboard/x]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

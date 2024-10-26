@@ -4,32 +4,32 @@ using UnityEngine.InputSystem;
 
 public class BombermanController : MonoBehaviour
 {
-     [Header("Movement Variables")]
-    [SerializeField] private float speed = 5f;        // Player movement speed
-    public float kickForce = 10f;                     // Force applied when kicking
-    public float punchRange = 0.5f;                   // Range for punching
+    [Header("Movement Variables")]
+    [SerializeField] private float speed = 5f;
+    public float kickForce = 10f;
+    public float punchRange = 0.5f;
 
-    private Vector2 moveInput;                        // Current movement input
-    private Vector2 lastMoveInput;                    // Last non-zero movement input
-    public Vector2 LastMoveInput => lastMoveInput;    // Property to get last move input
+    private Vector2 moveInput;
+    private Vector2 lastMoveInput;
+    public Vector2 LastMoveInput => lastMoveInput;
 
     [Header("Ability Flags")]
     private bool hasKick = false;
     private bool hasBoxingGlove = false;
     private bool hasPowerGlove = false;
 
-    public bool HasKick => hasKick;                   // Check if player can kick
-    public bool HasBoxingGlove => hasBoxingGlove;     // Check if player can use boxing glove
+    public bool HasKick => hasKick;
+    public bool HasBoxingGlove => hasBoxingGlove;
 
     [Header("Components")]
     private Rigidbody2D rb;
     private Animator animator;
     private CircleCollider2D circleCollider;
-    private BombController bombController;            // Bomb controller for bomb mechanics
+    private BombController bombController;
 
     [Header("State Flags")]
-    private bool isAlive = true;                      // Check if player is alive
-    private bool canMove = true;                      // Check if player can move
+    private bool isAlive = true;
+    private bool canMove = true;
 
     private void Awake()
     {
@@ -50,9 +50,17 @@ public class BombermanController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isAlive && other.gameObject.layer == LayerMask.NameToLayer("Explosion"))
+        if (isAlive)
         {
-            Death();   
+            if (other.gameObject.CompareTag("Win"))
+            {
+                WinState();
+            }
+            
+            if (other.gameObject.layer == LayerMask.NameToLayer("Explosion"))
+            {
+                Death();
+            }
         }
     }
 
@@ -86,27 +94,43 @@ public class BombermanController : MonoBehaviour
     #region Movement
     private void Movement()
     {
-        rb.velocity = moveInput * speed;
+        Vector2 normalizedInput = moveInput.normalized;
+        rb.velocity = normalizedInput * speed;
 
-        // Store the last movement direction if the input is non-zero
+        float horizontalAxis = normalizedInput.x;
+        float verticalAxis = normalizedInput.y;
+
+        // Direction control
+        if (Mathf.Abs(horizontalAxis) > Mathf.Abs(verticalAxis))
+        {
+            float direction = horizontalAxis > 0 ? 1 : -1;
+            rb.MovePosition(new Vector2(transform.position.x + direction * Time.deltaTime * speed, transform.position.y));
+        }
+        else if (Mathf.Abs(horizontalAxis) < Mathf.Abs(verticalAxis))
+        {
+            float direction = verticalAxis > 0 ? 1 : -1;
+            rb.MovePosition(new Vector2(transform.position.x, transform.position.y + direction * Time.deltaTime * speed));
+        }
+
+        // Store last movement direction
         if (moveInput != Vector2.zero)
         {
-            lastMoveInput = moveInput;
+            lastMoveInput = normalizedInput;
         }
     }
     public void EnableMovement()
     {
-        rb.isKinematic = false;                // Re-enable physics interactions
-        bombController.enabled = true;         // Re-enable bomb placement
-        canMove = true;                        // Allow movement again
+        rb.isKinematic = false;
+        bombController.enabled = true;
+        canMove = true;
     }
 
     public void DisableMovement()
     {
-        rb.velocity = Vector2.zero;            // Stop movement
-        rb.isKinematic = true;                 // Disable physics interactions
-        bombController.enabled = false;        // Disable bomb placement
-        canMove = false;                       // Prevent movement (can be reused for frozen or stunned states)
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+        bombController.enabled = false;
+        canMove = false;
     }
     #endregion
 
@@ -130,10 +154,21 @@ public class BombermanController : MonoBehaviour
     }
     #endregion
 
+    #region Win
+    public void WinState()
+    {
+        DisableMovement();
+        circleCollider.enabled = false;
+        animator.SetTrigger("win");
+        GameManager.instance.PlayerWon();
+        Debug.Log("You Win!");
+    }
+    #endregion
+
     #region Death
     public void RespawnPlayer()
     {
-        isAlive = true;         // Mark the player as alive
+        isAlive = true;
         circleCollider.enabled = true;
         GameManager.instance.currentState = GameState.Playing;
         EnableMovement();
@@ -141,25 +176,23 @@ public class BombermanController : MonoBehaviour
 
     private void Death()
     {
-        DisableMovement();       // Call DisableMovement when the player dies
-        isAlive = false;         // Mark the player as dead
+        DisableMovement();
+        isAlive = false;
         circleCollider.enabled = false;
-        // Start the coroutine to wait for the animation to finish
         StartCoroutine(HandleDeathAnimation());
     }
 
     private IEnumerator HandleDeathAnimation()
     {
         animator.SetTrigger("death");
-        // Wait until the death animation is playing
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("bomberman_death") &&
                                           animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
-        OnDeathEnd();  // Call OnDeathEnd after the animation
+        OnDeathEnd();
     }
 
     private void OnDeathEnd()
     {
-        gameObject.SetActive(false);  // Deactivate player after death animation ends
+        gameObject.SetActive(false);
         GameManager.instance.PlayerDied();
     }
     #endregion

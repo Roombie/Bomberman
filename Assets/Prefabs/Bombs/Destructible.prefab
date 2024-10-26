@@ -48,17 +48,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destructionTime: 1
-  itemSpawnChance: 0.2
+  itemSpawnChance: 1
   spawnableItems:
-  - {fileID: 732181853157115304, guid: f7b5b7b0bbbbff1428580785e3a30b4c, type: 3}
-  - {fileID: 1100372011938202669, guid: 879c4444661c3524b83daea17fb2fffb, type: 3}
-  - {fileID: 3913073678385574306, guid: 57f748419e7f57842aa104f3eaa00576, type: 3}
-  - {fileID: 4951953583299981238, guid: 64b9d537f84712a4197d7afa5ba2c169, type: 3}
-  - {fileID: 8433130174007456534, guid: 03f414b59d7dcb74e917f3590dd0101e, type: 3}
   - {fileID: 5855603601325083948, guid: 705d1fb5a80113546a97f27a56306f9a, type: 3}
-  - {fileID: 7425383701721762379, guid: c42aaf330bbd5cf438df679ac3fb6201, type: 3}
-  - {fileID: 3441689573338897196, guid: 662e936eefb352b48b10cfc7b9c5e821, type: 3}
-  - {fileID: 5626592621952421422, guid: 47d73fb128eaee04c901c87df1d4b336, type: 3}
 --- !u!114 &1454634064645372877
 MonoBehaviour:
   m_ObjectHideFlags: 0
