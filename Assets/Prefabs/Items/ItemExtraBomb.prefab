@@ -145,6 +145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &-7137805005023753281
 MonoBehaviour:
   m_ObjectHideFlags: 0

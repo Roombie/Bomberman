@@ -86,7 +86,7 @@ public class Bomb : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") && !isKicked)
         {
             var playerController = collision.gameObject.GetComponent<BombermanController>();
-            if (playerController != null && playerController.HasKick)
+            if (playerController != null && playerController.HasAbility(AbilityType.Kick))
             {
                 Vector2 kickDirection = playerController.LastMoveInput.normalized; // Get kick direction
                 KickBomb(kickDirection, playerController.kickForce); // Apply player's kick force

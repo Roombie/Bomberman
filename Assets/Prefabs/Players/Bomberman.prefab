@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5079888625374765985}
   - component: {fileID: 6956063791190245343}
   - component: {fileID: 8180143025030766215}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bomberman
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -50,7 +50,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f909c82013cfa4c458d12a8b2a874c04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  playerID: 0
+  speed: 3
   kickForce: 8
   punchRange: 8
 --- !u!114 &8310970787009213454
@@ -67,13 +68,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bombPrefab: {fileID: 5374846075033110772, guid: 77e8992e47ef0c247bed59848120de50, type: 3}
   bombFuseTime: 4
-  bombAmount: 2
+  bombAmount: 1
   explosionPrefab: {fileID: 4622943294504310551, guid: 00bbef38fdd0b5c499c824f13415d663, type: 3}
   explosionLayerMask:
     serializedVersion: 2
     m_Bits: 320
   explosionDuration: 1
-  explosionRadius: 8
+  explosionRadius: 1
   maxExplosionRadius: 8
   destructibleTiles: {fileID: 0}
   destructiblePrefab: {fileID: 8211669031180707945, guid: 85896429a4ee5a04d993bfdfa41c9d23, type: 3}

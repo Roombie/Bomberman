@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -18,22 +19,25 @@ public class GameManager : MonoBehaviour
     public GameState currentState;
 
     [Header("Game Settings")]
-    public int playerLives = 3;
+    public int defaultPlayerLives = 3;
     public float respawnDelay = 5f;            // Delay before respawning the player
-    public float countdownTime = 3f;           // Pre-game countdown time (3 seconds)
-    public float gameDuration = 60f;           // Total game duration in seconds
-    public Transform respawnPosition;
+    public float countdownTime = 3f;          // Pre-game countdown time (3 seconds)
+    public float gameDuration = 60f;          // Total game duration in seconds
+    public List<Transform> respawnPositions;  // Respawn positions for each player
 
     [Header("UI Elements")]
     public TMP_Text timerText;                 // Countdown timer display using TextMeshPro
-    public TMP_Text livesText;                 // Lives display using TextMeshPro
+    public List<TMP_Text> playerLivesTexts;    // Lives display for each player
     public TMP_Text countdownText;             // Countdown text before game starts
     public GameObject countdownImage;          // Image displayed during the countdown
     public GameObject winImage;                // Image displayed during win state
 
-    private GameObject currentPlayer;
+    private List<GameObject> players = new List<GameObject>();
+    private Dictionary<GameObject, int> playerLives = new Dictionary<GameObject, int>();
     private bool gamePaused = false;
-    private float remainingTime;                // Remaining time for the countdown
+    private float remainingTime;               // Remaining time for the countdown
+
+    public int CurrentPlayerID { get; private set; }
 
     private void Awake()
     {
@@ -50,8 +54,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        currentPlayer = GameObject.FindWithTag("Player");
-        currentPlayer.transform.position = respawnPosition.position;
+        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        players.AddRange(playerObjects);
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].transform.position = respawnPositions[i].position;
+            playerLives[players[i]] = defaultPlayerLives;
+            BombermanController controller = players[i].GetComponent<BombermanController>();
+            if (controller != null)
+            {
+                controller.SetPlayerID(i);
+            }
+        }
+
         StartCoroutine(StartGameWithCountdown());
     }
 
@@ -68,10 +84,13 @@ public class GameManager : MonoBehaviour
     {
         currentState = GameState.Countdown;
 
-        BombermanController bombermanController = currentPlayer.GetComponent<BombermanController>();
-        if (bombermanController != null)
+        foreach (var player in players)
         {
-            bombermanController.DisableMovement();
+            BombermanController controller = player.GetComponent<BombermanController>();
+            if (controller != null)
+            {
+                controller.DisableMovement();
+            }
         }
 
         // Show countdown image and text
@@ -99,73 +118,94 @@ public class GameManager : MonoBehaviour
     {
         currentState = GameState.Playing;
         remainingTime = gameDuration;  // Set remaining time to total game duration
-        playerLives = 3;
 
-        if (livesText != null)
-            livesText.text = playerLives.ToString();  // Update the lives display
-
-        BombermanController bombermanController = currentPlayer.GetComponent<BombermanController>();
-        if (bombermanController != null)
+        foreach (var player in players)
         {
-            bombermanController.EnableMovement();
+            BombermanController controller = player.GetComponent<BombermanController>();
+            if (controller != null)
+            {
+                controller.EnableMovement();
+            }
         }
+
+        UpdateAllLivesText();
     }
 
-    public void RespawnPlayer()
+    public void RespawnPlayer(GameObject player)
     {
-        if (playerLives > 0)
+        if (playerLives[player] > 0)
         {
-            StartCoroutine(RespawnPlayerCoroutine());
+            StartCoroutine(RespawnPlayerCoroutine(player));
         }
         else
         {
-            EndGame();
+            PlayerOut(player);
         }
     }
 
-    private IEnumerator RespawnPlayerCoroutine()
+    private IEnumerator RespawnPlayerCoroutine(GameObject player)
     {
         yield return new WaitForSeconds(respawnDelay);
 
-        currentPlayer.transform.position = respawnPosition.position;
-        currentPlayer.SetActive(true);
+        int playerIndex = players.IndexOf(player);
+        player.transform.position = respawnPositions[playerIndex].position;
+        player.SetActive(true);
 
-        // Enable movement on the player after respawning
-        BombermanController bombermanController = currentPlayer.GetComponent<BombermanController>();
-        if (bombermanController != null)
+        BombermanController controller = player.GetComponent<BombermanController>();
+        if (controller != null)
         {
-            bombermanController.RespawnPlayer();
+            controller.RespawnPlayer();
         }
     }
 
-    public void PlayerDied()
+    public void SetCurrentPlayerID(int playerID)
     {
-        playerLives--;
+        CurrentPlayerID = playerID;
+        Debug.Log($"Current player ID set to {playerID}");
+    }
 
-        UpdateLiveText();
+    public void PlayerDied(GameObject player)
+    {
+        playerLives[player]--;
+        UpdateLivesText(player);
 
-        if (playerLives > 0)
+        if (playerLives[player] > 0)
         {
-            RespawnPlayer();
+            RespawnPlayer(player);
         }
         else
         {
-            EndGame();
+            Debug.Log($"{player.name} is out of lives!");
+            PlayerOut(player);
         }
     }
 
-    public void PlayerWon()
+    private void PlayerOut(GameObject player)
+    {
+        players.Remove(player);
+        CheckGameOver();
+    }
+
+    public void PlayerWon(GameObject player)
     {
         currentState = GameState.Win;  // Set state to Win
         winImage.SetActive(true);
-        Debug.Log("You Win!");
+        Debug.Log($"{player.name} wins!");
     }
 
+    private void CheckGameOver()
+    {
+        if (players.Count == 0)
+        {
+            currentState = GameState.GameOver; // Set state to GameOver
+            Debug.Log("Game Over! All players are out of lives.");
+        }
+    }
 
     private void EndGame()
     {
-        currentState = GameState.GameOver; // Set state to GameOver
-        Debug.Log("Game Over! Out of lives.");
+        currentState = GameState.GameOver;
+        Debug.Log("Game Over! Time's up.");
     }
 
     public void TogglePauseGame()
@@ -173,17 +213,8 @@ public class GameManager : MonoBehaviour
         gamePaused = !gamePaused;
         Time.timeScale = gamePaused ? 0 : 1;
 
-        // Check the current state and update accordingly
-        if (gamePaused)
-        {
-            currentState = GameState.Paused; // Update state to Paused
-            Debug.Log("Game Paused");
-        }
-        else
-        {
-            currentState = GameState.Playing; // Update state back to Playing
-            Debug.Log("Game Resumed");
-        }
+        currentState = gamePaused ? GameState.Paused : GameState.Playing;
+        Debug.Log(gamePaused ? "Game Paused" : "Game Resumed");
     }
 
     public void RestartLevel()
@@ -191,33 +222,40 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void GainExtraLife(int lives)
+    public void GainExtraLife(GameObject player, int lives)
     {
-        playerLives += lives;
-        UpdateLiveText();
-        Debug.Log("Extra life gained! Total lives: " + playerLives);
+        playerLives[player] += lives;
+        UpdateLivesText(player);
+        Debug.Log($"{player.name} gained extra lives! Total lives: {playerLives[player]}");
     }
 
-    private void UpdateLiveText()
+    private void UpdateLivesText(GameObject player)
     {
-        if (livesText != null)
-            livesText.text = playerLives.ToString();  // Update the lives display
+        int playerIndex = players.IndexOf(player);
+        if (playerIndex >= 0 && playerIndex < playerLivesTexts.Count)
+        {
+            playerLivesTexts[playerIndex].text = playerLives[player].ToString();
+        }
+    }
+
+    private void UpdateAllLivesText()
+    {
+        foreach (var player in players)
+        {
+            UpdateLivesText(player);
+        }
     }
     #endregion
 
     #region Timer Logic
-
-    // Update the countdown timer
     private void UpdateGameTimer()
     {
         if (remainingTime > 0)
         {
             remainingTime -= Time.deltaTime; // Decrease remaining time by the elapsed time
 
-            // Clamp remaining time to not go below zero
-            remainingTime = Mathf.Max(remainingTime, 0);
+            remainingTime = Mathf.Max(remainingTime, 0); // Clamp remaining time to not go below zero
 
-            // Display the remaining time in minutes and seconds
             int minutes = Mathf.FloorToInt(remainingTime / 60f);
             int seconds = Mathf.FloorToInt(remainingTime % 60f);
 
@@ -226,13 +264,11 @@ public class GameManager : MonoBehaviour
                 timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds); // Display countdown using TMPro
             }
 
-            // Check for game over condition
             if (remainingTime <= 0)
             {
-                EndGame(); // End game when countdown reaches zero
+                EndGame();
             }
         }
     }
-
     #endregion
 }

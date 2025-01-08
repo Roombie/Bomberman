@@ -1,9 +1,21 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum AbilityType
+{
+    Kick,
+    BoxingGlove,
+    PowerGlove
+}
+
 public class BombermanController : MonoBehaviour
 {
+    [Header("Player Settings")]
+    [SerializeField] private int playerID;
+    public int PlayerID => playerID;
+
     [Header("Movement Variables")]
     [SerializeField] private float speed = 5f;
     public float kickForce = 10f;
@@ -14,12 +26,8 @@ public class BombermanController : MonoBehaviour
     public Vector2 LastMoveInput => lastMoveInput;
 
     [Header("Ability Flags")]
-    private bool hasKick = false;
-    private bool hasBoxingGlove = false;
-    private bool hasPowerGlove = false;
-
-    public bool HasKick => hasKick;
-    public bool HasBoxingGlove => hasBoxingGlove;
+    private HashSet<AbilityType> abilities = new HashSet<AbilityType>();
+    public bool HasAbility(AbilityType ability) => abilities.Contains(ability);
 
     [Header("Components")]
     private Rigidbody2D rb;
@@ -31,12 +39,15 @@ public class BombermanController : MonoBehaviour
     private bool isAlive = true;
     private bool canMove = true;
 
+    private int explosionLayer;
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        circleCollider = GetComponent<CircleCollider2D>();
+        rb = GetComponent<Rigidbody2D>() ?? throw new MissingComponentException("Missing Rigidbody2D component.");
+        animator = GetComponent<Animator>() ?? throw new MissingComponentException("Missing Animator component.");
+        circleCollider = GetComponent<CircleCollider2D>() ?? throw new MissingComponentException("Missing CircleCollider2D component.");
         bombController = GetComponent<BombController>();
+        explosionLayer = LayerMask.NameToLayer("Explosion");
     }
 
     void Update()
@@ -54,10 +65,11 @@ public class BombermanController : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Win"))
             {
+                transform.position = other.transform.position + new Vector3(0, 0.5f, 0);
                 WinState();
             }
-            
-            if (other.gameObject.layer == LayerMask.NameToLayer("Explosion"))
+
+            if (other.gameObject.layer == explosionLayer)
             {
                 Death();
             }
@@ -70,6 +82,12 @@ public class BombermanController : MonoBehaviour
         speed += 1f;
         Debug.Log("Speed increased! New speed: " + speed);
     }
+
+    public void EnableAbility(AbilityType ability)
+    {
+        abilities.Add(ability);
+        Debug.Log($"Enabled {ability}");
+    }
     #endregion
 
     #region Animations
@@ -77,7 +95,6 @@ public class BombermanController : MonoBehaviour
     {
         animator.SetFloat("speed", moveInput.magnitude);
 
-        // If there is no movement, keep the last direction
         if (moveInput != Vector2.zero)
         {
             animator.SetFloat("horizontal", moveInput.x);
@@ -94,30 +111,14 @@ public class BombermanController : MonoBehaviour
     #region Movement
     private void Movement()
     {
-        Vector2 normalizedInput = moveInput.normalized;
-        rb.velocity = normalizedInput * speed;
+        rb.velocity = moveInput.normalized * speed;
 
-        float horizontalAxis = normalizedInput.x;
-        float verticalAxis = normalizedInput.y;
-
-        // Direction control
-        if (Mathf.Abs(horizontalAxis) > Mathf.Abs(verticalAxis))
-        {
-            float direction = horizontalAxis > 0 ? 1 : -1;
-            rb.MovePosition(new Vector2(transform.position.x + direction * Time.deltaTime * speed, transform.position.y));
-        }
-        else if (Mathf.Abs(horizontalAxis) < Mathf.Abs(verticalAxis))
-        {
-            float direction = verticalAxis > 0 ? 1 : -1;
-            rb.MovePosition(new Vector2(transform.position.x, transform.position.y + direction * Time.deltaTime * speed));
-        }
-
-        // Store last movement direction
         if (moveInput != Vector2.zero)
         {
-            lastMoveInput = normalizedInput;
+            lastMoveInput = moveInput.normalized;
         }
     }
+
     public void EnableMovement()
     {
         rb.isKinematic = false;
@@ -134,23 +135,10 @@ public class BombermanController : MonoBehaviour
     }
     #endregion
 
-    #region Abilities
-    public void EnableKick()
+    #region Multiplayer
+    public void SetPlayerID(int id)
     {
-        hasKick = true;
-        Debug.Log($"Can you kick? {hasKick}");
-    }
-
-    public void EnableBoxingGlove()
-    {
-        hasBoxingGlove = true;
-        Debug.Log($"Can you use boxing glove? {hasBoxingGlove}");
-    }
-
-    public void EnablePowerGlove()
-    {
-        hasPowerGlove = true;
-        Debug.Log($"Can you use power glove? {hasPowerGlove}");
+        playerID = id;
     }
     #endregion
 
@@ -160,7 +148,7 @@ public class BombermanController : MonoBehaviour
         DisableMovement();
         circleCollider.enabled = false;
         animator.SetTrigger("win");
-        GameManager.instance.PlayerWon();
+        GameManager.instance.PlayerWon(gameObject);
         Debug.Log("You Win!");
     }
     #endregion
@@ -168,6 +156,7 @@ public class BombermanController : MonoBehaviour
     #region Death
     public void RespawnPlayer()
     {
+        Debug.Log($"{name} is respawning.");
         isAlive = true;
         circleCollider.enabled = true;
         GameManager.instance.currentState = GameState.Playing;
@@ -176,6 +165,7 @@ public class BombermanController : MonoBehaviour
 
     private void Death()
     {
+        Debug.Log($"{name} has died.");
         DisableMovement();
         isAlive = false;
         circleCollider.enabled = false;
@@ -185,22 +175,30 @@ public class BombermanController : MonoBehaviour
     private IEnumerator HandleDeathAnimation()
     {
         animator.SetTrigger("death");
-        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("bomberman_death") &&
-                                          animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+        yield return new WaitUntil(() => IsAnimationComplete("bomberman_death"));
         OnDeathEnd();
+    }
+
+    private bool IsAnimationComplete(string animationName)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName(animationName) && stateInfo.normalizedTime >= 1f;
     }
 
     private void OnDeathEnd()
     {
         gameObject.SetActive(false);
-        GameManager.instance.PlayerDied();
+        GameManager.instance.PlayerDied(gameObject);
     }
     #endregion
 
     #region Input
     public void OnMove(InputAction.CallbackContext context)
     {
-        moveInput = context.ReadValue<Vector2>();
+        if (GameManager.instance.CurrentPlayerID == playerID)
+        {
+            moveInput = context.ReadValue<Vector2>();
+        }
     }
 
     public void OnPause(InputAction.CallbackContext context)
