@@ -44,11 +44,73 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 45013949886464
-    m_Key: Control_text
+    m_Key: Controls_text
     m_Metadata:
       m_Items: []
   - m_Id: 45236235415552
     m_Key: Display_text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43164749423013888
+    m_Key: Controls_Up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172227657330688
+    m_Key: Controls_Down
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172256547696640
+    m_Key: Controls_Left
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172300818575360
+    m_Key: Controls_Right
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172330610716672
+    m_Key: Controls_Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172350256836608
+    m_Key: Controls_Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172367151493120
+    m_Key: Controls_PlaceBomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43174687805370368
+    m_Key: Controls_Vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175068874665984
+    m_Key: Options_Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175215658528768
+    m_Key: Options_Default
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192028182179840
+    m_Key: OptionsMenu/OptionsMenu/DisplaySettings/Graphics Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192156855037952
+    m_Key: OptionsMenu/OptionsMenu/DisplaySettings/Resolution Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192615447654400
+    m_Key: OptionsMenu/OptionsMenu/DisplaySettings/ToggleFullscreen Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43194073664548864
+    m_Key: OptionsMenu/OptionsMenu/DisplaySettings/DefaultSettingsButton/DefaultSettings
+      Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43195428131139584
+    m_Key: OptionsMenu/OptionsMenu/AudioSettings/DefaultAudio Button/DefaultSettings
+      Text (TMP)
     m_Metadata:
       m_Items: []
   m_Metadata:

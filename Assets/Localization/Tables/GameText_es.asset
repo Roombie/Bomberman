@@ -43,15 +43,75 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 44828041555968
-    m_Localized: Lenguaje
+    m_Localized: Idiomas
     m_Metadata:
       m_Items: []
   - m_Id: 45013949886464
-    m_Localized: Control
+    m_Localized: Controles
     m_Metadata:
       m_Items: []
   - m_Id: 45236235415552
     m_Localized: Display
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43164749423013888
+    m_Localized: Arriba
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172227657330688
+    m_Localized: Abajo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172256547696640
+    m_Localized: Izquierda
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172300818575360
+    m_Localized: Derecha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172330610716672
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172350256836608
+    m_Localized: Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172367151493120
+    m_Localized: Colocar Bomba
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43174687805370368
+    m_Localized: "Vibraci\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175068874665984
+    m_Localized: Salir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175215658528768
+    m_Localized: Reestablecer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192028182179840
+    m_Localized: "GR\xC1FICOS"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192156855037952
+    m_Localized: "RESOLUCI\xD3N"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192615447654400
+    m_Localized: PANTALLA COMPLET
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43194073664548864
+    m_Localized: Reestablecer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43195428131139584
+    m_Localized: Reestablecer
     m_Metadata:
       m_Items: []
   references:

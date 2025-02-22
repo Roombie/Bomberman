@@ -47,11 +47,71 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 45013949886464
-    m_Localized: Control
+    m_Localized: Controls
     m_Metadata:
       m_Items: []
   - m_Id: 45236235415552
     m_Localized: Ecran
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43164749423013888
+    m_Localized: Haut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172256547696640
+    m_Localized: Gauche
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172227657330688
+    m_Localized: Bas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172300818575360
+    m_Localized: Droite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172330610716672
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172350256836608
+    m_Localized: Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43172367151493120
+    m_Localized: Placer bombe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43174687805370368
+    m_Localized: Vibration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175068874665984
+    m_Localized: Sortie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43175215658528768
+    m_Localized: "D\xE9faut"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192028182179840
+    m_Localized: GRAPHIQUES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192156855037952
+    m_Localized: "R\xC9SOLUTION"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43192615447654400
+    m_Localized: "PLEIN \xC9CRAN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43194073664548864
+    m_Localized: "D\xE9faut"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43195428131139584
+    m_Localized: "D\xE9faut"
     m_Metadata:
       m_Items: []
   references:
